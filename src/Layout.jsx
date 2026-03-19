@@ -17,31 +17,15 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-const navigationItems = [
-  {
-    title: "Dashboard",
-    url: createPageUrl("Dashboard"),
-    icon: Home,
-  },
-  {
-    title: "Gerenciar Locais",
-    url: createPageUrl("Locais"),
-    icon: MapPin,
-  },
-  {
-    title: "Gerenciar Slides",
-    url: createPageUrl("Slides"),
-    icon: Image,
-  },
-  {
-    title: "Agenda Yumit",
-    url: createPageUrl("Agenda"),
-    icon: Calendar,
-  },
-];
-
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+
+  const navigationItems = [
+    { title: "Dashboard", url: createPageUrl("Dashboard"), icon: Home },
+    { title: "Gerenciar Locais", url: createPageUrl("Locais"), icon: MapPin },
+    { title: "Gerenciar Slides", url: createPageUrl("Slides"), icon: Image },
+    { title: "Agenda Yumit", url: createPageUrl("Agenda"), icon: Calendar },
+  ];
 
   // Se for a página do Player, não mostrar o layout
   if (currentPageName === "Player") {
