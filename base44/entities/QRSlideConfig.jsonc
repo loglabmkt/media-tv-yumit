@@ -1,0 +1,51 @@
+{
+  "name": "QRSlideConfig",
+  "type": "object",
+  "properties": {
+    "titulo": {
+      "type": "string",
+      "description": "Nome interno para identificar no admin"
+    },
+    "link_qrcode": {
+      "type": "string",
+      "description": "URL que ser\u00e1 codificada no QR Code"
+    },
+    "headline": {
+      "type": "string",
+      "description": "Texto grande exibido \u00e0 esquerda"
+    },
+    "subtitulo": {
+      "type": "string",
+      "description": "Texto menor abaixo do headline"
+    },
+    "tempo_exibicao": {
+      "type": "number",
+      "default": 20,
+      "description": "Dura\u00e7\u00e3o do slide em segundos"
+    },
+    "frequencia_tipo": {
+      "type": "string",
+      "enum": [
+        "entre_todos",
+        "a_cada_n_slides"
+      ],
+      "default": "entre_todos",
+      "description": "Frequ\u00eancia de exibi\u00e7\u00e3o do QR Slide"
+    },
+    "frequencia_n": {
+      "type": "number",
+      "default": 3,
+      "description": "A cada N slides de m\u00eddia (usado quando frequencia_tipo = a_cada_n_slides)"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o QR Slide est\u00e1 ativo"
+    }
+  },
+  "required": [
+    "titulo",
+    "link_qrcode",
+    "headline"
+  ]
+}

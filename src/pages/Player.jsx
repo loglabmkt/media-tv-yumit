@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from '@/api/base44Client';
 import { InvokeLLM } from "@/integrations/Core";
 
 import PlayerSlide from "../components/player/PlayerSlide";
 import InfoDashboardSlide from "../components/player/InfoDashboardSlide";
+import QRCodeSlide from "../components/player/QRCodeSlide";
 
 export default function Player() {
   const [slides, setSlides] = useState([]);
   const [local, setLocal] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [showInfoSlide, setShowInfoSlide] = useState(false);
+  // currentSpecialSlide: null | 'info' | 'qr'
+  const [currentSpecialSlide, setCurrentSpecialSlide] = useState(null);
   const [weather, setWeather] = useState(null);
   const [news, setNews] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [agenda, setAgenda] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [qrConfig, setQrConfig] = useState(null);
+  // Contador de slides de mídia exibidos (para frequencia a_cada_n)
+  const mediaSlideCountRef = useRef(0);
+  // Qual especial mostrar a seguir (alterna entre info e qr quando ambos ativos)
+  const nextSpecialRef = useRef('info');
+
   // Tempo de exibição do InfoDashboardSlide (em segundos)
   const INFO_SLIDE_DURATION = 15;
 
@@ -85,10 +92,20 @@ export default function Player() {
 
           loadExternalData();
           loadAgenda();
+          loadQRConfig();
 
         } catch (error) {
           console.error("Erro ao carregar dados:", error);
           setIsLoading(false);
+        }
+      };
+
+      const loadQRConfig = async () => {
+        try {
+          const list = await base44.entities.QRSlideConfig.filter({ ativo: true });
+          if (list.length > 0) setQrConfig(list[0]);
+        } catch (e) {
+          console.error("Erro ao carregar QRSlideConfig:", e);
         }
       };
 
@@ -189,35 +206,64 @@ Retorne 10 manchetes misturadas (shuffle) dessas fontes. Cada notícia deve ter 
     }
   }, []);
 
-  // Lógica de rotação: Mídia -> InfoCard -> Mídia -> InfoCard
+  // Helpers para decidir qual slide especial mostrar após um slide de mídia
+  const shouldShowQR = (localData, qrCfg, mediaCount) => {
+    if (!localData?.exibir_slide_qrcode) return false;
+    if (!qrCfg?.ativo || !qrCfg?.link_qrcode?.startsWith('http')) return false;
+    if (qrCfg.frequencia_tipo === 'entre_todos') return true;
+    const n = qrCfg.frequencia_n || 1;
+    return mediaCount % n === 0;
+  };
+
+  const getNextSpecial = (localData, qrCfg, mediaCount) => {
+    const infoActive = localData?.exibir_slide_interativo !== false;
+    const qrActive = shouldShowQR(localData, qrCfg, mediaCount);
+    if (!infoActive && !qrActive) return null;
+    if (infoActive && !qrActive) return 'info';
+    if (!infoActive && qrActive) return 'qr';
+    // Ambos ativos: alterna
+    const next = nextSpecialRef.current;
+    nextSpecialRef.current = next === 'info' ? 'qr' : 'info';
+    return next;
+  };
+
+  // Lógica de rotação
   useEffect(() => {
     if (slides.length === 0) return;
 
-    if (showInfoSlide) {
-      // Exibindo InfoCard, depois de X segundos vai para próximo slide
+    if (currentSpecialSlide === 'info') {
       const timer = setTimeout(() => {
-        setShowInfoSlide(false);
+        setCurrentSpecialSlide(null);
         setCurrentSlideIndex(prev => (prev + 1) % slides.length);
       }, INFO_SLIDE_DURATION * 1000);
-
-      return () => clearTimeout(timer);
-    } else {
-      // Exibindo mídia, depois vai para InfoCard
-      const currentSlide = slides[currentSlideIndex];
-      const duration = (currentSlide?.tempo_exibicao || 10) * 1000;
-
-      const timer = setTimeout(() => {
-        // Só mostra InfoSlide se o campo exibir_slide_interativo for true (ou ausente = default true)
-        if (local?.exibir_slide_interativo !== false) {
-          setShowInfoSlide(true);
-        } else {
-          setCurrentSlideIndex(prev => (prev + 1) % slides.length);
-        }
-      }, duration);
-
       return () => clearTimeout(timer);
     }
-  }, [currentSlideIndex, showInfoSlide, slides, local]);
+
+    if (currentSpecialSlide === 'qr') {
+      const duration = (qrConfig?.tempo_exibicao || 20) * 1000;
+      const timer = setTimeout(() => {
+        setCurrentSpecialSlide(null);
+        setCurrentSlideIndex(prev => (prev + 1) % slides.length);
+      }, duration);
+      return () => clearTimeout(timer);
+    }
+
+    // Exibindo mídia
+    const currentSlide = slides[currentSlideIndex];
+    const duration = (currentSlide?.tempo_exibicao || 10) * 1000;
+
+    const timer = setTimeout(() => {
+      mediaSlideCountRef.current += 1;
+      const next = getNextSpecial(local, qrConfig, mediaSlideCountRef.current);
+      if (next) {
+        setCurrentSpecialSlide(next);
+      } else {
+        setCurrentSlideIndex(prev => (prev + 1) % slides.length);
+      }
+    }, duration);
+
+    return () => clearTimeout(timer);
+  }, [currentSlideIndex, currentSpecialSlide, slides, local, qrConfig]);
 
   if (isLoading) {
     return (
@@ -312,14 +358,16 @@ Retorne 10 manchetes misturadas (shuffle) dessas fontes. Cada notícia deve ter 
         );
       })}
       
-      {/* Conteúdo: ou Mídia ou InfoDashboardSlide */}
-      {showInfoSlide ? (
-        <InfoDashboardSlide 
+      {/* Conteúdo: Mídia, InfoDashboardSlide ou QRCodeSlide */}
+      {currentSpecialSlide === 'info' ? (
+        <InfoDashboardSlide
           weather={weather}
           quotes={quotes}
           news={news}
           agenda={agenda}
         />
+      ) : currentSpecialSlide === 'qr' ? (
+        <QRCodeSlide config={qrConfig} />
       ) : (
         <PlayerSlide slide={currentSlide} />
       )}

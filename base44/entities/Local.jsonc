@@ -31,6 +31,11 @@
       "type": "boolean",
       "default": true,
       "description": "Se o InfoDashboardSlide deve ser intercalado entre os slides de m\u00eddia no Player"
+    },
+    "exibir_slide_qrcode": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o QRCodeSlide deve ser intercalado entre os slides de m\u00eddia no Player"
     }
   },
   "required": [

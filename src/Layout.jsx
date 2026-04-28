@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Monitor, MapPin, Image, Home, Play, Calendar } from "lucide-react";
+import { Monitor, MapPin, Image, Home, Play, Calendar, QrCode } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +25,7 @@ export default function Layout({ children, currentPageName }) {
     { title: "Gerenciar Locais", url: createPageUrl("Locais"), icon: MapPin },
     { title: "Gerenciar Slides", url: createPageUrl("Slides"), icon: Image },
     { title: "Agenda Yumit", url: createPageUrl("Agenda"), icon: Calendar },
+    { title: "Slide QR Code", url: createPageUrl("QRSlide"), icon: QrCode },
   ];
 
   // Se for a página do Player, não mostrar o layout
