@@ -1,0 +1,40 @@
+{
+  "name": "Local",
+  "type": "object",
+  "properties": {
+    "nome": {
+      "type": "string",
+      "description": "Nome do local (ex: Recep\u00e7\u00e3o, Sala de Reuni\u00e3o)"
+    },
+    "descricao": {
+      "type": "string",
+      "description": "Descri\u00e7\u00e3o do ambiente"
+    },
+    "codigo": {
+      "type": "string",
+      "description": "C\u00f3digo \u00fanico para identifica\u00e7\u00e3o"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o local est\u00e1 ativo"
+    },
+    "slides_sequence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Array ordenado de IDs dos slides na playlist"
+    },
+    "exibir_slide_interativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o InfoDashboardSlide deve ser intercalado entre os slides de m\u00eddia no Player"
+    }
+  },
+  "required": [
+    "nome",
+    "codigo"
+  ]
+}

@@ -15,7 +15,8 @@ export default function LocalForm({ local, onSubmit, onCancel }) {
     descricao: "",
     codigo: "",
     ativo: true,
-    slides_sequence: []
+    slides_sequence: [],
+    exibir_slide_interativo: true
   });
   const [allSlides, setAllSlides] = useState([]);
   const [playlistSlides, setPlaylistSlides] = useState([]);
@@ -156,6 +157,29 @@ export default function LocalForm({ local, onSubmit, onCancel }) {
             <p className="text-sm text-slate-500">
               Arraste os slides para definir a ordem de reprodução no Player.
             </p>
+
+            {/* Toggle Slide Interativo */}
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-800">🎛️ Slide Interativo</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    formData.exibir_slide_interativo !== false
+                      ? "bg-green-100 text-green-700"
+                      : "bg-slate-200 text-slate-500"
+                  }`}>
+                    {formData.exibir_slide_interativo !== false ? "Ativo" : "Inativo"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Exibe painel com notícias, clima, trânsito e agenda entre os slides de mídia
+                </p>
+              </div>
+              <Switch
+                checked={formData.exibir_slide_interativo !== false}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, exibir_slide_interativo: checked }))}
+              />
+            </div>
 
             {isLoadingSlides ? (
               <div className="space-y-2">

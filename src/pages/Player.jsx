@@ -207,8 +207,8 @@ Retorne 10 manchetes misturadas (shuffle) dessas fontes. Cada notícia deve ter 
       const duration = (currentSlide?.tempo_exibicao || 10) * 1000;
 
       const timer = setTimeout(() => {
-        // Só mostra InfoSlide se o dashboard estiver habilitado
-        if (local?.exibir_dashboard !== false) {
+        // Só mostra InfoSlide se o campo exibir_slide_interativo for true (ou ausente = default true)
+        if (local?.exibir_slide_interativo !== false) {
           setShowInfoSlide(true);
         } else {
           setCurrentSlideIndex(prev => (prev + 1) % slides.length);
