@@ -1,0 +1,53 @@
+{
+  "name": "Evento",
+  "type": "object",
+  "properties": {
+    "titulo": {
+      "type": "string",
+      "description": "T\u00edtulo do evento"
+    },
+    "data_hora": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do evento"
+    },
+    "local": {
+      "type": "string",
+      "description": "Local do evento"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "palestra",
+        "workshop",
+        "meetup",
+        "networking",
+        "outro"
+      ],
+      "default": "palestra",
+      "description": "Tipo do evento"
+    },
+    "cor": {
+      "type": "string",
+      "enum": [
+        "amarelo",
+        "azul",
+        "verde",
+        "roxo",
+        "laranja"
+      ],
+      "default": "amarelo",
+      "description": "Cor do evento para exibi\u00e7\u00e3o"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o evento est\u00e1 ativo"
+    }
+  },
+  "required": [
+    "titulo",
+    "data_hora",
+    "local"
+  ]
+}

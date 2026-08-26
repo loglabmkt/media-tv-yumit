@@ -1,0 +1,52 @@
+{
+  "name": "Slide",
+  "type": "object",
+  "properties": {
+    "titulo": {
+      "type": "string",
+      "description": "T\u00edtulo do slide"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "imagem",
+        "video",
+        "youtube"
+      ],
+      "description": "Tipo de conte\u00fado do slide"
+    },
+    "conteudo_url": {
+      "type": "string",
+      "description": "URL do conte\u00fado (arquivo ou link do YouTube)"
+    },
+    "tempo_exibicao": {
+      "type": "number",
+      "default": 10,
+      "description": "Tempo de exibi\u00e7\u00e3o em segundos"
+    },
+    "local_id": {
+      "type": "string",
+      "description": "ID do local onde ser\u00e1 exibido"
+    },
+    "ordem": {
+      "type": "number",
+      "default": 0,
+      "description": "Ordem de exibi\u00e7\u00e3o na playlist"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o slide est\u00e1 ativo"
+    },
+    "youtube_duracao": {
+      "type": "number",
+      "description": "Dura\u00e7\u00e3o personalizada para v\u00eddeos do YouTube (em segundos)"
+    }
+  },
+  "required": [
+    "titulo",
+    "tipo",
+    "conteudo_url",
+    "local_id"
+  ]
+}
